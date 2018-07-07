@@ -20,8 +20,6 @@ try:
     sun_coordinate.Print()
     mirror_coordinate.Print()
 
-    # angle = int(raw_input('write and angle: '))
     servo_client.MoveTo(sun_coordinate)
-    # time.sleep(0.1)
 except KeyboardInterrupt:
   pass

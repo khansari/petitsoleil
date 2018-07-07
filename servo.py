@@ -26,9 +26,6 @@ class ServoClient(object):
     yaw_pw_current = self._pi_client.get_servo_pulsewidth(self._yaw_motor.pin)
     pitch_pw_target = self.AngleToPulseWidth(coordinate.pitch, self._pitch_motor)
     yaw_pw_target = self.AngleToPulseWidth(coordinate.yaw, self._yaw_motor)
-    print coordinate.yaw
-    print yaw_pw_target
-    print self._yaw_motor.angle_range
     num_points = max(abs(pitch_pw_target - pitch_pw_current),
                      abs(yaw_pw_target - yaw_pw_current))
 
