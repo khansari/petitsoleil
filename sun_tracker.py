@@ -2,18 +2,19 @@ import datetime
 import ephem
 import math
 
-date = datetime.datetime.utcnow()
+OBSERVER_COORDINATE = ['37.49000', '-122.25910']  # [lat, long]
 
-obs=ephem.Observer()
-obs.lat='37.49000'
-obs.long='-122.25910'
-obs.date = date
-print obs
+class SunTracker(object):
 
-sun = ephem.Sun(obs)
-sun.compute(obs)
-sun_alt = float(sun.alt) * 180 / math.pi
-sun_az = float(sun.az) * 180 / math.pi
-print 'Sun location: (%f, %f)' % (sun_alt, sun_az)
+  def __init__(self, observer_coordinate):
+    self._observer = ephem.Observer()
+    self._observer.lat = observer_coordinate[0]
+    self._observer.long = observer_coordinate[1]
 
-
+  def GetSunLocation(self):
+    self._observer.date = datetime.datetime.utcnow()
+    sun = ephem.Sun(self._observer)
+    sun_elevation = float(sun.alt) * 180 / math.pi
+    sun_azimuth = float(sun.az) * 180 / math.pi
+    print 'Sun location: (%f, %f)' % (sun_elevation, sun_azimuth)
+    return (sun_elevation, sun_azimuth)
