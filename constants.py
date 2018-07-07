@@ -18,6 +18,6 @@ MOTOR_PARAMETERS = {
 }
 
 TARGET_PARAMETERS = {
-  18: TargetParameters(name='tree', pitch=10, yaw=150),
-  23: TargetParameters(name='house', pitch=10, yaw=150),
+  18: TargetParameters(name='tree', pitch=0, yaw=0),
+  23: TargetParameters(name='house', pitch=0, yaw=90),
 }

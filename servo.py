@@ -36,14 +36,13 @@ class TargetClient(object):
     self._target_parameters = target_parameters
     for pin in self._target_parameters.keys():
       self._pi_client.set_mode(pin, pigpio.INPUT)
-      self._pi_client.set_pull_up_down(pin, pigpio.PUD_DOWN)
+      self._pi_client.set_pull_up_down(pin, pigpio.PUD_UP)
 
   def GetCurrentTargetLocation(self):
-    for target_pin, target_parameter in iteritems(self._target_parameters)
-      if self._pi_client.read(target_pin):
-        print '%s is active' % target_parameter.name
-        return
-    print 'nothing is active'
+    for target_pin, target_parameter in self._target_parameters.iteritems():
+      if not self._pi_client.read(target_pin):
+        return target_parameter.pitch, target_parameter.yaw
+    return 90, 90
 
 
 pi_client = pigpio.pi()
@@ -51,12 +50,13 @@ mirror_client = MirrorClient(pi_client,
                              constants.MOTOR_PARAMETERS['pitch'],
                              constants.MOTOR_PARAMETERS['yaw'])
 
-target_client = TargetClient(pi_client, TARGET_PARAMETERS)
+target_client = TargetClient(pi_client, constants.TARGET_PARAMETERS)
 
 try:
   while True:
-    target_client.GetCurrentTargetLocation()
-    angle = int(raw_input('write and angle: '))
-    mirror_client.MoveTo(angle, angle)
+    pitch, yaw = target_client.GetCurrentTargetLocation()
+    # angle = int(raw_input('write and angle: '))
+    mirror_client.MoveTo(pitch, yaw)
+    time.sleep(0.1)
 except KeyboardInterrupt:
   pass
