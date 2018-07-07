@@ -1,15 +1,16 @@
 import coordinate
+import numpy as np
 import servo
 import target
 
 
 OBSERVER_COORDINATE = ['37.49000', '-122.25910']  # [lat, long]
 
-MOTOR_PARAMETERS = {
+SERVO_PARAMETERS = {
   'pitch': 
-      servo.ServoParameters(pin=19, pulse_range=(2500, 1500), angle_range=(0, np.rad2deg(90))),
+      servo.ServoParameters(pin=19, pulse_range=(2500, 1500), angle_range=(0, np.deg2rad(90))),
   'yaw': 
-      servo.ServoParameters(pin=13, pulse_range=(500, 1500), angle_range=(0, np.rad2deg(90))),
+      servo.ServoParameters(pin=13, pulse_range=(500, 1500), angle_range=(0, np.deg2rad(90))),
 }
 
 TARGET_PARAMETERS = {

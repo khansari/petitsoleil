@@ -26,13 +26,13 @@ class MirrorClient(object):
   def GetSunCoordinate(self):
     self._observer.date = datetime.datetime.utcnow()
     sun = ephem.Sun(self._observer)
-    return coordinate.Coordinate(pitch=sun.alt, yaw=sun.az, name='Sun', degree=False)
+    return coordinate.Coordinate(pitch=float(sun.alt), yaw=float(sun.az), name='Sun', degree=False)
 
   def GetMirrorCoordinate(self, 
                           target_coordinate, 
                           convergence_precision=np.deg2rad(0.1),
                           max_iter=10):
-    sun_coordinate = self.GetSunLocation()
+    sun_coordinate = self.GetSunCoordinate()
     mirror_coordinate = (sun_coordinate + target_coordinate) / 2.0
     mirror_coordinate.name = 'mirror'
 

@@ -1,5 +1,3 @@
-#/usr/lib/python
-
 import constants
 import pigpio
 import mirror
@@ -15,15 +13,15 @@ target_client = target.TargetClient(pi_client, constants.TARGET_PARAMETERS)
 try:
   while True:
     raw_input('Press enter:')
+    target_coordinate = target_client.GetCurrentTargetLocation()
     sun_coordinate = mirror_client.GetSunCoordinate()
-    mirror_coordinate = mirror_client.GetMirrorCoordinate()
+    mirror_coordinate = mirror_client.GetMirrorCoordinate(target_coordinate)
 
     sun_coordinate.Print()
     mirror_coordinate.Print()
 
-    # target_coordinate = target_client.GetCurrentTargetLocation()
     # angle = int(raw_input('write and angle: '))
-    servo_client.MoveTo(target_coordinate)
+    servo_client.MoveTo(sun_coordinate)
     # time.sleep(0.1)
 except KeyboardInterrupt:
   pass

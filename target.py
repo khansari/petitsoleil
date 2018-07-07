@@ -12,6 +12,8 @@ class TargetClient(object):
     self._pi_client = pi_client
     self._target_parameters = target_parameters
     for pin in self._target_parameters.keys():
+      if pin < 0:
+        continue
       self._pi_client.set_mode(pin, pigpio.INPUT)
       self._pi_client.set_pull_up_down(pin, pigpio.PUD_UP)
 

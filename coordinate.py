@@ -35,8 +35,8 @@ class Coordinate(object):
 
   def Print(self, degree=True):
     if degree:
-      print('%s coordinate: (%0.2f, %0.2f)' % (np.rad2deg(self.pitch), 
+      print('%s coordinate: (%0.2f, %0.2f)' % (self.name, np.rad2deg(self.pitch), 
                                                np.rad2deg(self.yaw)))
     else:
-      print('%s coordinate: (%0.2f, %0.2f)' % (self.pitch, self.yaw))
+      print('%s coordinate: (%0.2f, %0.2f)' % (self.name, self.pitch, self.yaw))
     

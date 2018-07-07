@@ -11,10 +11,10 @@ class ServoParameters(object):
 
 
 class ServoClient(object):
-  def __init__(self, pi_client, pitch_motor, yaw_motor):
+  def __init__(self, pi_client, servo_parameters):
     self._pi_client = pi_client
-    self._pitch_motor = pitch_motor
-    self._yaw_motor = yaw_motor
+    self._pitch_motor = servo_parameters['pitch']
+    self._yaw_motor = servo_parameters['yaw']
 
   def AngleToPulseWidth(self, angle, motor_parameter):
     return int(np.interp(angle, 
@@ -26,7 +26,9 @@ class ServoClient(object):
     yaw_pw_current = self._pi_client.get_servo_pulsewidth(self._yaw_motor.pin)
     pitch_pw_target = self.AngleToPulseWidth(coordinate.pitch, self._pitch_motor)
     yaw_pw_target = self.AngleToPulseWidth(coordinate.yaw, self._yaw_motor)
-
+    print coordinate.yaw
+    print yaw_pw_target
+    print self._yaw_motor.angle_range
     num_points = max(abs(pitch_pw_target - pitch_pw_current),
                      abs(yaw_pw_target - yaw_pw_current))
 
