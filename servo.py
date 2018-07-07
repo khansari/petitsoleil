@@ -1,7 +1,6 @@
 import constants
 import numpy as np
 import pigpio
-import RPi.GPIO as GPIO
 import time
 
 class MirrorClient(object):
@@ -31,25 +30,33 @@ class MirrorClient(object):
       self._pi_client.set_servo_pulsewidth(self._yaw_motor.pin, yaw_pw_command)
       time.sleep(sleeptime)
 
+class TargetClient(object):
+  def __init__(self, pi_client, target_parameters):
+    self._pi_client = pi_client
+    self._target_parameters = target_parameters
+    for pin in self._target_parameters.keys():
+      self._pi_client.set_mode(pin, pigpio.INPUT)
+      self._pi_client.set_pull_up_down(pin, pigpio.PUD_DOWN)
 
-# GPIO.setmode(GPIO.BCM)
-# for button_pin in BUTTONS_PIN:
-#   GPIO.setup(BUTTONS_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+  def GetCurrentTargetLocation(self):
+    for target_pin, target_parameter in iteritems(self._target_parameters)
+      if self._pi_client.read(target_pin):
+        print '%s is active' % target_parameter.name
+        return
+    print 'nothing is active'
+
 
 pi_client = pigpio.pi()
 mirror_client = MirrorClient(pi_client, 
                              constants.MOTOR_PARAMETERS['pitch'],
                              constants.MOTOR_PARAMETERS['yaw'])
 
+target_client = TargetClient(pi_client, TARGET_PARAMETERS)
+
 try:
   while True:
-    # for button_pin in BUTTONS_PIN:
-    #   input_state = GPIO.input(button_pin)
-    #   if not input_state:
-    #     print 'Button %d pressed' % button_pin
-    # time.sleep(0.2)
+    target_client.GetCurrentTargetLocation()
     angle = int(raw_input('write and angle: '))
     mirror_client.MoveTo(angle, angle)
 except KeyboardInterrupt:
-  # GPIO.output(BUTTON_PIN_POWER, False)
-  GPIO.cleanup()
+  pass
