@@ -4,13 +4,6 @@ import pigpio
 import RPi.GPIO as GPIO
 import time
 
-class MotorParameters(object):
-  def __init__(self, pin, pulse_range, angle_range):
-    self.pin = pin
-    self.pulse_range = pulse_range
-    self.angle_range = angle_range
-
-
 class MirrorClient(object):
   def __init__(self, pi_client, pitch_motor, yaw_motor):
     self._pi_client = pi_client
@@ -22,11 +15,11 @@ class MirrorClient(object):
                          motor_parameter.angle_range, 
                          motor_parameter.pulse_range))
 
-  def MoveTo(pitch, yaw, sleeptime=0.01)
+  def MoveTo(self, pitch, yaw, sleeptime=0.002):
     pitch_pw_current = self._pi_client.get_servo_pulsewidth(self._pitch_motor.pin)
     yaw_pw_current = self._pi_client.get_servo_pulsewidth(self._yaw_motor.pin)
-    pitch_pw_target = self.AngleToPulseWidth(pitch)
-    yaw_pw_target = self.AngleToPulseWidth(yaw)
+    pitch_pw_target = self.AngleToPulseWidth(pitch, self._pitch_motor)
+    yaw_pw_target = self.AngleToPulseWidth(yaw, self._yaw_motor)
 
     num_points = max(abs(pitch_pw_target - pitch_pw_current),
                      abs(yaw_pw_target - yaw_pw_current))
