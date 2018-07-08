@@ -1,6 +1,6 @@
 import coordinate
 import datetime
-#import ephem
+import ephem
 import numpy as np
 
 
@@ -12,6 +12,8 @@ def GetReflectionAngles(sun_coordinate, mirror_coordinate):
 
   reflection_yaw = np.arctan2(world_ray_reflection[1], world_ray_reflection[0])
   reflection_pitch = np.arcsin(-world_ray_reflection[2])
+  if reflection_yaw < 0:
+    reflection_yaw += 2 * np.pi
   return coordinate.Coordinate(
       pitch=reflection_pitch, yaw=reflection_yaw, name='Reflection', degree=False)
 
@@ -24,20 +26,26 @@ def GetMirrorCoordinate(sun_coordinate,
   mirror_coordinate.name = 'mirror'
 
   for i in xrange(max_iter):
-    print('*********************************************')
-    print('Iter %d' % i)
-    mirror_coordinate.Print()
+    # print('*********************************************')
+    # print('Iter %d' % i)
+    # mirror_coordinate.Print()
     reflection_coordinate = GetReflectionAngles(sun_coordinate, mirror_coordinate)
+    reflection_coordinate.name = 'reflection'
     error_coordinate = target_coordinate - reflection_coordinate
-    error_coordinate.Print()
+    error_coordinate.name = 'error'
+    # error_coordinate.Print()
     mirror_coordinate += error_coordinate / 10.0
+    mirror_coordinate.name = 'mirror'
     if (abs(error_coordinate.yaw) < convergence_precision and
         abs(error_coordinate.pitch) < convergence_precision):
       break
 
   print('*********************************************')
+  reflection_coordinate = GetReflectionAngles(sun_coordinate, mirror_coordinate)
+  reflection_coordinate.name = 'reflection'
+  reflection_coordinate.Print()
   mirror_coordinate.Print()
-  return GetReflectionAngles(sun_coordinate, mirror_coordinate)
+  return mirror_coordinate
 
 
 class MirrorClient(object):
@@ -52,11 +60,10 @@ class MirrorClient(object):
     sun = ephem.Sun(self._observer)
     return coordinate.Coordinate(pitch=float(sun.alt), yaw=float(sun.az), name='Sun', degree=False)
 
-  @staticmethod
   def GetMirrorCoordinate(self,
                           target_coordinate, 
                           convergence_precision=np.deg2rad(0.1),
-                          max_iter=10):
+                          max_iter=50):
     sun_coordinate = self.GetSunCoordinate()
     return GetMirrorCoordinate(sun_coordinate,
                                target_coordinate, 
