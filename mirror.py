@@ -48,6 +48,7 @@ def GetMirrorCoordinate(sun_coordinate,
     print('*********************************************')
     reflection_coordinate.Print()
     mirror_coordinate.Print()
+  reflection_coordinate.Print()
   return mirror_coordinate
 
 

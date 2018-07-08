@@ -3,6 +3,7 @@ import constants
 import datetime
 import pigpio
 import mirror
+import numpy as np
 import servo
 import target
 import time
@@ -10,8 +11,8 @@ import time
 
 parser = argparse.ArgumentParser()
 parser.add_argument(
-    'target', default=None,
-    help='Overrides the button definition and manually defines a target'.)
+    '--target', default=None,
+    help='Overrides the button definition and manually defines a target.')
 args = parser.parse_args()
 
 pi_client = pigpio.pi()
@@ -23,7 +24,7 @@ while True:
   if args.target is None:
     target_coordinate = target_client.GetTargetCoordinateFromButtons()
   else:
-    target_coordinate = target_client.GetTargetCoordinateFromName(name=args.target)
+    target_coordinate = target_client.GetTargetCoordinateFromName(target_name=args.target)
   target_coordinate.Print()
   sun_coordinate = mirror_client.GetSunCoordinate()
   sun_coordinate.Print()

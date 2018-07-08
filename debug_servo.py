@@ -14,5 +14,8 @@ while True:
   yaw = float(input_list[1])
   target = coordinate.Coordinate(pitch=pitch, yaw=yaw, degree=True, name='target')
   target.Print()
-  servo_client.MoveTo(target)
+  try:
+    servo_client.MoveTo(target)
+  except pigpio.error:
+    servo_client.MoveTo(target, sleeptime=0)
   
