@@ -4,7 +4,7 @@ import servo
 import target
 
 
-OBSERVER_COORDINATE = ['37.49000', '-122.25910']  # [lat, long]
+OBSERVER_COORDINATE = ['37.48996', '-122.25905']  # [lat, long]
 
 SERVO_PARAMETERS = {
   'pitch': 

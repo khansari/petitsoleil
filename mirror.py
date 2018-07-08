@@ -21,30 +21,33 @@ def GetReflectionAngles(sun_coordinate, mirror_coordinate):
 def GetMirrorCoordinate(sun_coordinate,
                         target_coordinate, 
                         convergence_precision=np.deg2rad(0.1),
-                        max_iter=10):
+                        max_iter=10,
+                        verbose=False):
   mirror_coordinate = (sun_coordinate + target_coordinate) / 2.0
   mirror_coordinate.name = 'mirror'
 
   for i in xrange(max_iter):
-    # print('*********************************************')
-    # print('Iter %d' % i)
-    # mirror_coordinate.Print()
+    if verbose:
+      print('*********************************************')
+      print('Iter %d' % i)
+      mirror_coordinate.Print()
     reflection_coordinate = GetReflectionAngles(sun_coordinate, mirror_coordinate)
-    reflection_coordinate.name = 'reflection'
     error_coordinate = target_coordinate - reflection_coordinate
     error_coordinate.name = 'error'
-    # error_coordinate.Print()
+    if verbose:
+      error_coordinate.Print()
     mirror_coordinate += error_coordinate / 10.0
     mirror_coordinate.name = 'mirror'
     if (abs(error_coordinate.yaw) < convergence_precision and
         abs(error_coordinate.pitch) < convergence_precision):
       break
 
-  print('*********************************************')
   reflection_coordinate = GetReflectionAngles(sun_coordinate, mirror_coordinate)
-  reflection_coordinate.name = 'reflection'
-  reflection_coordinate.Print()
-  mirror_coordinate.Print()
+
+  if verbose:
+    print('*********************************************')
+    reflection_coordinate.Print()
+    mirror_coordinate.Print()
   return mirror_coordinate
 
 

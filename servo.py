@@ -22,10 +22,16 @@ class ServoClient(object):
                          motor_parameter.pulse_range))
 
   def MoveTo(self, coordinate, sleeptime=0.002):
-    pitch_pw_current = self._pi_client.get_servo_pulsewidth(self._pitch_motor.pin)
-    yaw_pw_current = self._pi_client.get_servo_pulsewidth(self._yaw_motor.pin)
     pitch_pw_target = self.AngleToPulseWidth(coordinate.pitch, self._pitch_motor)
     yaw_pw_target = self.AngleToPulseWidth(coordinate.yaw, self._yaw_motor)
+
+    if sleeptime == 0:
+      self._pi_client.set_servo_pulsewidth(self._pitch_motor.pin, pitch_pw_target)
+      self._pi_client.set_servo_pulsewidth(self._yaw_motor.pin, yaw_pw_target)
+      return
+
+    pitch_pw_current = self._pi_client.get_servo_pulsewidth(self._pitch_motor.pin)
+    yaw_pw_current = self._pi_client.get_servo_pulsewidth(self._yaw_motor.pin)
     num_points = max(abs(pitch_pw_target - pitch_pw_current),
                      abs(yaw_pw_target - yaw_pw_current))
 
