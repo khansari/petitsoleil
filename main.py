@@ -1,6 +1,7 @@
 import argparse
 import constants
 import datetime
+import functools
 import pigpio
 import mirror
 import numpy as np
@@ -13,7 +14,7 @@ def MirrorCommandCallback(
     mirror_client, servo_client, target_coordinate):
   print('************************************************************')
   # Printing time in pacific time zone.
-  print(datetime.datetime.now() + datetime.timedelta(hours=7))
+  print(datetime.datetime.now() + datetime.timedelta(hours=-7))
   target_coordinate.Print()
   sun_coordinate = mirror_client.GetSunCoordinate()
   sun_coordinate.Print()
@@ -21,10 +22,14 @@ def MirrorCommandCallback(
   if target_coordinate.name == 'sun':
     servo_client.MoveTo(sun_coordinate)
     return 60
+  elif target_coordinate.name == 'idle':
+    servo_client.MoveTo(target_coordinate)
+    return 60
+   
 
   if ((sun_coordinate.pitch < np.deg2rad(20) and sun_coordinate.yaw > np.deg2rad(180)) or
       (sun_coordinate.pitch < np.deg2rad(40) and sun_coordinate.yaw < np.deg2rad(180))):
-    print '%s: hybernate mode.' % datetime.datetime.now()
+    print('Hybernate mode is active.')
     return 300
 
   mirror_coordinate = mirror_client.GetMirrorCoordinate(target_coordinate)
@@ -37,7 +42,7 @@ def ButtonStatusThread(target_client, mirror_command_callback):
   prev_target = target_client.GetTarget()
   while True:
     current_target = target_client.GetTarget()
-    if current_target.name != prev_target.name:
+    if current_target.coordinate.name != prev_target.coordinate.name:
       prev_target = current_target
       mirror_command_callback(target_coordinate=current_target.coordinate)
     time.sleep(1)
@@ -52,7 +57,7 @@ args = parser.parse_args()
 pi_client = pigpio.pi()
 mirror_client = mirror.MirrorClient(constants.OBSERVER_COORDINATE)
 servo_client = servo.ServoClient(pi_client, constants.SERVO_PARAMETERS)
-target_client = target.TargetClient(pi_client, constants.TARGET_PARAMETERS)
+target_client = target.TargetClient(pi_client, constants.TARGET_PARAMETERS, args.target)
 target = target_client.GetTarget()
 
 mirror_command_callback = functools.partial(
@@ -61,7 +66,8 @@ mirror_command_callback = functools.partial(
     servo_client=servo_client)
 
 button_status_thread = threading.Thread(
-    target=ButtonStatusThread, arg=(target_client, mirror_command_callback))
+    target=ButtonStatusThread, args=(target_client, mirror_command_callback))
+print('Started button status thread.')
 button_status_thread.start()
 time.sleep(5)  # Letting thread to start.
 

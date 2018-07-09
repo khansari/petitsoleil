@@ -2,10 +2,9 @@ import pigpio
 
 
 class TargetParameters(object):
-  def __init__(self, name, coordinate, user_target):
-    self.name = name
+  def __init__(self, coordinate=None, pin=None):
     self.coordinate = coordinate
-    self.coordinate.name = name
+    self.pin = pin
 
 
 class TargetClient(object):
@@ -30,7 +29,7 @@ class TargetClient(object):
         break
 
     if self._user_target_name is not None:
-      if selected_target_parameter.name == 'idle':
+      if selected_target_parameter.coordinate.name == 'idle':
         selected_target_parameter = self._target_parameters[self._user_target_name]
       else:
         print('Warning the button is not in idle mode, hence ignoring the user input.')
