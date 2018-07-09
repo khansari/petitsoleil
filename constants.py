@@ -14,10 +14,14 @@ SERVO_PARAMETERS = {
 }
 
 TARGET_PARAMETERS = {
-  -1: target.TargetParameters(
-      name='idle', coordinate=coordinate.Coordinate(pitch=90, yaw=90, degree=True, name='idle')),
-  18: target.TargetParameters(
-      name='tree', coordinate=coordinate.Coordinate(pitch=20, yaw=145, degree=True, name='tree')),
-  23: target.TargetParameters(
-      name='house', coordinate=coordinate.Coordinate(pitch=-12, yaw=328, degree=True, name='house'))
+  'idle': target.TargetParameters(
+      pin=None, coordinate=coordinate.Coordinate(pitch=90, yaw=90, degree=True)),
+  'sun': target.TargetParameters(
+      pin=None, coordinate=None),
+  'tree': target.TargetParameters(
+      pin=18, coordinate=coordinate.Coordinate(pitch=20, yaw=145, degree=True)),
+  'house': target.TargetParameters(
+      pin=23, coordinate=coordinate.Coordinate(pitch=-12, yaw=328, degree=True)),
+  'ceiling': target.TargetParameters(
+      pin=23, coordinate=coordinate.Coordinate(pitch=3, yaw=304, degree=True)),
 }

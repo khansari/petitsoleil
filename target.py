@@ -2,33 +2,36 @@ import pigpio
 
 
 class TargetParameters(object):
-  def __init__(self, name, coordinate):
+  def __init__(self, name, coordinate, user_target):
     self.name = name
     self.coordinate = coordinate
+    self.coordinate.name = name
 
 
 class TargetClient(object):
-  def __init__(self, pi_client, target_parameters):
+  def __init__(self, pi_client, target_parameters, user_target_name):
+    self._user_target_name = user_target_name
     self._pi_client = pi_client
     self._target_parameters = target_parameters
-    for pin in self._target_parameters.keys():
-      if pin < 0:
-        continue
-      self._pi_client.set_mode(pin, pigpio.INPUT)
-      self._pi_client.set_pull_up_down(pin, pigpio.PUD_UP)
-
-  def GetTargetCoordinateFromButtons(self):
-    for target_pin, target_parameter in self._target_parameters.iteritems():
-      if target_pin < 0:  # Skipping the idle pin.
-        continue
-      if not self._pi_client.read(target_pin):
-        return target_parameter.coordinate
-    # If button is in the idle pose, returning the idle coordinate.
-    return self._target_parameters[-1].coordinate
-
-  def GetTargetCoordinateFromName(self, target_name):
     for target_parameter in self._target_parameters.values():
-      if target_name == target_parameter.name:
-        return target_parameter.coordinate
-    # If no match is found, we return the idle coordinate.
-    return self._target_parameters[-1].coordinate
+      if target_parameter.pin is None:  # Skipping the no button cases.
+        continue
+      self._pi_client.set_mode(target_parameter.pin, pigpio.INPUT)
+      self._pi_client.set_pull_up_down(target_parameter.pin, pigpio.PUD_UP)
+
+  def GetTarget(self):
+    # The default value.
+    selected_target_parameter = self._target_parameters['idle']
+    for target_parameter in self._target_parameters.values():
+      if target_parameter.pin is None:  # Skipping the no button cases.
+        continue
+      if not self._pi_client.read(target_parameter.pin):
+        selected_target_parameter = target_parameter
+        break
+
+    if self._user_target_name is not None:
+      if selected_target_parameter.name == 'idle':
+        selected_target_parameter = self._target_parameters[self._user_target_name]
+      else:
+        print('Warning the button is not in idle mode, hence ignoring the user input.')
+    return selected_target_parameter
