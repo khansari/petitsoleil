@@ -30,6 +30,7 @@ def MirrorCommandCallback(
   if ((sun_coordinate.pitch < np.deg2rad(20) and sun_coordinate.yaw > np.deg2rad(180)) or
       (sun_coordinate.pitch < np.deg2rad(40) and sun_coordinate.yaw < np.deg2rad(180))):
     print('Hybernate mode is active.')
+    servo_client.MoveTo(constants.TARGET_PARAMETERS['idle'].coordinate)
     return 300
 
   mirror_coordinate = mirror_client.GetMirrorCoordinate(target_coordinate)

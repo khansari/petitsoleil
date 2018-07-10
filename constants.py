@@ -22,6 +22,6 @@ TARGET_PARAMETERS = {
       pin=18, coordinate=coordinate.Coordinate(pitch=20, yaw=145, degree=True, name='tree')),
   'house': target.TargetParameters(
       pin=23, coordinate=coordinate.Coordinate(pitch=-12, yaw=328, degree=True, name='house')),
-  'ceiling': target.TargetParameters(
-      pin=23, coordinate=coordinate.Coordinate(pitch=3, yaw=304, degree=True, name='ceiling')),
+  # 'ceiling': target.TargetParameters(
+  #     pin=23, coordinate=coordinate.Coordinate(pitch=3, yaw=304, degree=True, name='ceiling')),
 }
