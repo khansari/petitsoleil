@@ -15,7 +15,7 @@ class ButtonStatusThread(threading.Thread):
   regularly for the stopped() condition."""
 
   def __init__(self, target_client, mirror_command_callback):
-    super(StoppableThread, self).__init__()
+    super(ButtonStatusThread, self).__init__()
     self._stop_event = threading.Event()
     self._target_client = target_client
     self._mirror_command_callback = mirror_command_callback
@@ -28,7 +28,7 @@ class ButtonStatusThread(threading.Thread):
 
   def run(self):
     prev_target = self._target_client.GetTarget()
-    while not stopped():
+    while not self.stopped():
       current_target = self._target_client.GetTarget()
       if current_target.coordinate.name != prev_target.coordinate.name:
         prev_target = current_target
