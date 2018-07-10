@@ -10,6 +10,33 @@ import target
 import threading
 import time
 
+class ButtonStatusThread(threading.Thread):
+  """Thread class with a stop() method. The thread itself has to check
+  regularly for the stopped() condition."""
+
+  def __init__(self, target_client, mirror_command_callback):
+    super(StoppableThread, self).__init__()
+    self._stop_event = threading.Event()
+    self._target_client = target_client
+    self._mirror_command_callback = mirror_command_callback
+
+  def stop(self):
+    self._stop_event.set()
+
+  def stopped(self):
+    return self._stop_event.is_set()
+
+  def run(self):
+    prev_target = self._target_client.GetTarget()
+    while not stopped():
+      current_target = self._target_client.GetTarget()
+      if current_target.coordinate.name != prev_target.coordinate.name:
+        prev_target = current_target
+        self._mirror_command_callback(
+            target_coordinate=current_target.coordinate)
+      time.sleep(1)
+
+
 def MirrorCommandCallback(
     mirror_client, servo_client, target_coordinate):
   print('************************************************************')
@@ -39,16 +66,6 @@ def MirrorCommandCallback(
   return 60
 
 
-def ButtonStatusThread(target_client, mirror_command_callback):
-  prev_target = target_client.GetTarget()
-  while True:
-    current_target = target_client.GetTarget()
-    if current_target.coordinate.name != prev_target.coordinate.name:
-      prev_target = current_target
-      mirror_command_callback(target_coordinate=current_target.coordinate)
-    time.sleep(1)
-
-
 parser = argparse.ArgumentParser()
 parser.add_argument(
     '--target', default=None,
@@ -66,12 +83,15 @@ mirror_command_callback = functools.partial(
     mirror_client=mirror_client, 
     servo_client=servo_client)
 
-button_status_thread = threading.Thread(
-    target=ButtonStatusThread, args=(target_client, mirror_command_callback))
-print('Started button status thread.')
-button_status_thread.start()
-time.sleep(5)  # Letting thread to start.
+button_status_thread = ButtonStatusThread(target_client, mirror_command_callback)
+try:
+  button_status_thread.start()
+  print('Started button status thread.')
+  time.sleep(1)  # Letting thread to start.
 
-while True:
-  sleeptime = mirror_command_callback(target_coordinate=target.coordinate)
-  time.sleep(sleeptime)
+  while True:
+    sleeptime = mirror_command_callback(target_coordinate=target.coordinate)
+    time.sleep(sleeptime)
+except KeyboardInterrupt:
+  button_status_thread.stop()
+  button_status_thread.join()
