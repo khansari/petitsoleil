@@ -38,7 +38,7 @@ class ButtonStatusThread(threading.Thread):
 
 
 def MirrorCommandCallback(
-    mirror_client, servo_client, target_coordinate):
+    mirror_client, servo_client, target_coordinate, no_hybernate=False):
   print('************************************************************')
   # Printing time in pacific time zone.
   print(datetime.datetime.now() + datetime.timedelta(hours=-7))
@@ -54,7 +54,8 @@ def MirrorCommandCallback(
     return 60
    
 
-  if ((sun_coordinate.pitch < np.deg2rad(20) and sun_coordinate.yaw > np.deg2rad(180)) or
+  if not no_hybernate and (
+      (sun_coordinate.pitch < np.deg2rad(20) and sun_coordinate.yaw > np.deg2rad(180)) or
       (sun_coordinate.pitch < np.deg2rad(40) and sun_coordinate.yaw < np.deg2rad(180))):
     print('Hybernate mode is active.')
     servo_client.MoveTo(constants.TARGET_PARAMETERS['idle'].coordinate)
@@ -70,12 +71,16 @@ parser = argparse.ArgumentParser()
 parser.add_argument(
     '--target', default=None,
     help='Overrides the button definition and manually defines a target.')
+parser.add_argument(
+    '--no_hybernate', action='store_true', default=False,
+    help='When set, then the device does not go to hybernate mode.')
 args = parser.parse_args()
 
 pi_client = pigpio.pi()
 mirror_client = mirror.MirrorClient(constants.OBSERVER_COORDINATE)
 servo_client = servo.ServoClient(pi_client, constants.SERVO_PARAMETERS)
-target_client = target.TargetClient(pi_client, constants.TARGET_PARAMETERS, args.target)
+target_client = target.TargetClient(
+    pi_client, constants.TARGET_PARAMETERS, args.target)
 target = target_client.GetTarget()
 
 mirror_command_callback = functools.partial(
@@ -90,7 +95,8 @@ try:
   time.sleep(1)  # Letting thread to start.
 
   while True:
-    sleeptime = mirror_command_callback(target_coordinate=target.coordinate)
+    sleeptime = mirror_command_callback(
+        target_coordinate=target.coordinate, no_hybernate=args.no_hybernate)
     time.sleep(sleeptime)
 except KeyboardInterrupt:
   button_status_thread.stop()

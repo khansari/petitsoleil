@@ -20,17 +20,15 @@ class TargetClient(object):
 
   def GetTarget(self):
     # The default value.
-    selected_target_parameter = self._target_parameters['idle']
+    if self._user_target_name is None:
+      selected_target_parameter = self._target_parameters['idle']
+    else:
+      selected_target_parameter = self._target_parameters[self._user_target_name]
+
     for target_parameter in self._target_parameters.values():
       if target_parameter.pin is None:  # Skipping the no button cases.
         continue
       if not self._pi_client.read(target_parameter.pin):
         selected_target_parameter = target_parameter
         break
-
-    if self._user_target_name is not None:
-      if selected_target_parameter.coordinate.name == 'idle':
-        selected_target_parameter = self._target_parameters[self._user_target_name]
-      else:
-        print('Warning the button is not in idle mode, hence ignoring the user input.')
     return selected_target_parameter
