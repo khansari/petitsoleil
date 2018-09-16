@@ -30,5 +30,6 @@ class TargetClient(object):
         continue
       if not self._pi_client.read(target_parameter.pin):
         selected_target_parameter = target_parameter
+        # print(target_parameter.pin)
         break
     return selected_target_parameter

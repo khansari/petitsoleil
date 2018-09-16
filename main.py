@@ -32,16 +32,16 @@ class ButtonStatusThread(threading.Thread):
       current_target = self._target_client.GetTarget()
       if current_target.coordinate.name != prev_target.coordinate.name:
         prev_target = current_target
-        self._mirror_command_callback(
-            target_coordinate=current_target.coordinate)
+        self._mirror_command_callback()
       time.sleep(1)
 
 
 def MirrorCommandCallback(
-    mirror_client, servo_client, target_coordinate, no_hybernate=False):
+    mirror_client, servo_client, target_client, no_hybernate=False):
   print('************************************************************')
   # Printing time in pacific time zone.
   print(datetime.datetime.now() + datetime.timedelta(hours=-7))
+  target_coordinate = target_client.GetTarget().coordinate
   target_coordinate.Print()
   sun_coordinate = mirror_client.GetSunCoordinate()
   sun_coordinate.Print()
@@ -51,12 +51,11 @@ def MirrorCommandCallback(
     return 60
   elif target_coordinate.name == 'idle':
     servo_client.MoveTo(target_coordinate)
-    return 60
-   
+    return 60  
 
   if not no_hybernate and (
       (sun_coordinate.pitch < np.deg2rad(20) and sun_coordinate.yaw > np.deg2rad(180)) or
-      (sun_coordinate.pitch < np.deg2rad(40) and sun_coordinate.yaw < np.deg2rad(180))):
+      (sun_coordinate.yaw < np.deg2rad(140))):
     print('Hybernate mode is active.')
     servo_client.MoveTo(constants.TARGET_PARAMETERS['idle'].coordinate)
     return 300
@@ -74,19 +73,20 @@ parser.add_argument(
 parser.add_argument(
     '--no_hybernate', action='store_true', default=False,
     help='When set, then the device does not go to hybernate mode.')
-args = parser.parse_args()
+flags = parser.parse_args()
 
 pi_client = pigpio.pi()
 mirror_client = mirror.MirrorClient(constants.OBSERVER_COORDINATE)
 servo_client = servo.ServoClient(pi_client, constants.SERVO_PARAMETERS)
 target_client = target.TargetClient(
-    pi_client, constants.TARGET_PARAMETERS, args.target)
-target = target_client.GetTarget()
+    pi_client, constants.TARGET_PARAMETERS, flags.target)
 
 mirror_command_callback = functools.partial(
     MirrorCommandCallback, 
     mirror_client=mirror_client, 
-    servo_client=servo_client)
+    servo_client=servo_client,
+    target_client=target_client,
+    no_hybernate=flags.no_hybernate)
 
 button_status_thread = ButtonStatusThread(target_client, mirror_command_callback)
 try:
@@ -95,8 +95,7 @@ try:
   time.sleep(1)  # Letting thread to start.
 
   while True:
-    sleeptime = mirror_command_callback(
-        target_coordinate=target.coordinate, no_hybernate=args.no_hybernate)
+    sleeptime = mirror_command_callback()
     time.sleep(sleeptime)
 except KeyboardInterrupt:
   button_status_thread.stop()
