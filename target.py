@@ -5,6 +5,12 @@ class TargetParameters(object):
   def __init__(self, coordinate=None, pin=None):
     self.coordinate = coordinate
     self.pin = pin
+  
+  @property
+  def name(self):
+    if self.coordinate is None:
+      return 'None'
+    return self.coordinate.name
 
 
 class TargetClient(object):

@@ -30,7 +30,7 @@ class ButtonStatusThread(threading.Thread):
     prev_target = self._target_client.GetTarget()
     while not self.stopped():
       current_target = self._target_client.GetTarget()
-      if current_target.coordinate.name != prev_target.coordinate.name:
+      if current_target.name != prev_target.name:
         prev_target = current_target
         self._mirror_command_callback()
       time.sleep(1)
@@ -42,7 +42,8 @@ def MirrorCommandCallback(
   # Printing time in pacific time zone.
   print(datetime.datetime.now() + datetime.timedelta(hours=-7))
   target_coordinate = target_client.GetTarget().coordinate
-  target_coordinate.Print()
+  if target_coordinate.name != 'sun':
+    target_coordinate.Print()
   sun_coordinate = mirror_client.GetSunCoordinate()
   sun_coordinate.Print()
 
@@ -80,7 +81,6 @@ mirror_client = mirror.MirrorClient(constants.OBSERVER_COORDINATE)
 servo_client = servo.ServoClient(pi_client, constants.SERVO_PARAMETERS)
 target_client = target.TargetClient(
     pi_client, constants.TARGET_PARAMETERS, flags.target)
-
 mirror_command_callback = functools.partial(
     MirrorCommandCallback, 
     mirror_client=mirror_client, 
