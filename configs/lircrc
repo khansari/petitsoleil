@@ -55,6 +55,13 @@ begin
 end
 
 begin
+  button = FF
+  prog   = petitsoleil
+  repeat = 4
+  config = living-floor
+end
+
+begin
   button = 70
   prog   = petitsoleil
   repeat = 4

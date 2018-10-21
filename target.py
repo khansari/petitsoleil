@@ -35,7 +35,11 @@ class TargetClient(object):
       if target_name == button:
         self._current_target_name = button
         print 'Selected target %s.' % button
-        return self._target_parameters[self._current_target_name] 
+        return self._target_parameters[self._current_target_name]
+ 
+    # If the target is set to sun, we do not need to check the rest of the method.
+    if self._current_target_name == 'sun':
+      return
 
     if button == 'up':
       self._target_parameters[self._current_target_name].pitch += np.deg2rad(self._rate) 
