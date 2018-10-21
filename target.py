@@ -51,7 +51,7 @@ class TargetClient(object):
       self._target_parameters[self._current_target_name].yaw -= np.deg2rad(self._rate) 
       return self.GetTarget()
     elif button == 'left':
-      self._target_parameters[self._current_target_name].yaw += np.deg2rad(self_rate) 
+      self._target_parameters[self._current_target_name].yaw += np.deg2rad(self._rate) 
       return self.GetTarget()
     elif button == 'slow':
       self._rate = 1 
