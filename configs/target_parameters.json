@@ -1,0 +1,45 @@
+[
+  {
+    "name": "living-ceiling",
+    "pitch": 10.0,
+    "yaw": 265.0
+  },
+  {
+    "name": "family-floor",
+    "pitch": -15.0,
+    "yaw": 237.0
+  },
+  {
+    "name": "dining-floor",
+    "pitch": -15.0,
+    "yaw": 270.0
+  },
+  {
+    "name": "sun"
+  },
+  {
+    "name": "tree",
+    "pitch": 30.0,
+    "yaw": 145.0
+  },
+  {
+    "name": "idle",
+    "pitch": 30.0,
+    "yaw": 260.0
+  },
+  {
+    "name": "dining-ceiling",
+    "pitch": 15.0,
+    "yaw": 265.0
+  },
+  {
+    "name": "living-floor",
+    "pitch": -15.0,
+    "yaw": 270.0
+  },
+  {
+    "name": "family-ceiling",
+    "pitch": 15.0,
+    "yaw": 265.0
+  }
+]

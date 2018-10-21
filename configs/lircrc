@@ -1,0 +1,120 @@
+begin
+  button = ON
+  prog   = petitsoleil
+  repeat = 4
+  config = idle
+end
+
+begin
+  button = OFF
+  prog   = petitsoleil
+  repeat = 4
+  config = sun
+end
+
+begin
+  button = UP
+  prog   = petitsoleil
+  repeat = 4
+  config = up
+end
+
+begin
+  button = DOWN
+  prog   = petitsoleil
+  repeat = 4
+  config = down
+end
+
+begin
+  button = 100
+  prog   = petitsoleil
+  repeat = 4
+  config = left
+end
+
+begin
+  button = 50
+  prog   = petitsoleil
+  repeat = 4
+  config = right
+end
+
+begin
+  button = 60
+  prog   = petitsoleil
+  repeat = 4
+  config = family-floor
+end
+
+begin
+  button = 10
+  prog   = petitsoleil
+  repeat = 4
+  config = dining-floor
+end
+
+begin
+  button = FF
+  prog   = petitsoleil
+  repeat = 4
+  config = living-floor
+end
+
+begin
+  button = 70
+  prog   = petitsoleil
+  repeat = 4
+  config = family-ceiling
+end
+
+begin
+  button = 20
+  prog   = petitsoleil
+  repeat = 4
+  config = dining-ceiling
+end
+
+begin
+  button = 3HZ
+  prog   = petitsoleil
+  repeat = 4
+  config = living-ceiling
+end
+
+begin
+  button = 5S
+  prog   = petitsoleil
+  repeat = 4
+  config = slow
+end
+
+begin
+  button = 10S
+  prog   = petitsoleil
+  repeat = 4
+  config = medium
+end
+
+begin
+  button = 15S
+  prog   = petitsoleil
+  repeat = 4
+  config = fast
+end
+
+begin
+  button = CLEAR
+  prog   = petitsoleil
+  repeat = 0
+  ignore_first_events = 10
+  config = save
+end
+
+begin
+  button = SMOOTH
+  prog   = petitsoleil
+  repeat = 0
+  ignore_first_events = 10
+  config = load
+end
