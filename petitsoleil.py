@@ -1,3 +1,5 @@
+#! /usr/bin/env python
+
 import argparse
 import constants
 import datetime
@@ -60,7 +62,7 @@ def MirrorCommandCallback(
       (sun_coordinate.pitch < np.deg2rad(20) and sun_coordinate.yaw > np.deg2rad(180)) or
       (sun_coordinate.yaw < np.deg2rad(140))):
     print('Hybernate mode is active.')
-    servo_client.MoveTo(constants.TARGET_PARAMETERS['idle'])
+    servo_client.MoveTo(target_client.GetIdleTarget())
     return 300
 
   mirror_coordinate = mirror_client.GetMirrorCoordinate(target_coordinate)

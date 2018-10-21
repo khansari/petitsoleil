@@ -22,6 +22,9 @@ class TargetClient(object):
 
   def GetTarget(self):
     return self._target_parameters[self._current_target_name]
+
+  def GetIdleTarget(self):
+    return self._target_parameters['idle']
   
   def MayUpdateTarget(self):  
     button = lirc.nextcode()
