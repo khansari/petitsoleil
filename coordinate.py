@@ -5,7 +5,7 @@ class Coordinate(object):
   def __init__(self, pitch, yaw, degree=False, name='unknown'):
     self.pitch = pitch
     self.yaw = yaw
-    if degree:
+    if degree and pitch is not None and yaw is not None:
       self.pitch = np.deg2rad(self.pitch)
       self.yaw = np.deg2rad(self.yaw)
     self.name = name

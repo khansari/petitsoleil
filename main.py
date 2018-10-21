@@ -27,13 +27,11 @@ class ButtonStatusThread(threading.Thread):
     return self._stop_event.is_set()
 
   def run(self):
-    prev_target = self._target_client.GetTarget()
     while not self.stopped():
-      current_target = self._target_client.GetTarget()
-      if current_target.name != prev_target.name:
-        prev_target = current_target
+      new_target = self._target_client.MayUpdateTarget()
+      if new_target is not None:
         self._mirror_command_callback()
-      time.sleep(1)
+      time.sleep(0.1)
 
 
 def MirrorCommandCallback(
@@ -41,7 +39,11 @@ def MirrorCommandCallback(
   print('************************************************************')
   # Printing time in pacific time zone.
   print(datetime.datetime.now() + datetime.timedelta(hours=-7))
-  target_coordinate = target_client.GetTarget().coordinate
+  target_coordinate = target_client.GetTarget()
+  if target_coordinate is None:
+    print 'Petit Soleil is off.'
+    return 300
+
   if target_coordinate.name != 'sun':
     target_coordinate.Print()
   sun_coordinate = mirror_client.GetSunCoordinate()
@@ -58,7 +60,7 @@ def MirrorCommandCallback(
       (sun_coordinate.pitch < np.deg2rad(20) and sun_coordinate.yaw > np.deg2rad(180)) or
       (sun_coordinate.yaw < np.deg2rad(140))):
     print('Hybernate mode is active.')
-    servo_client.MoveTo(constants.TARGET_PARAMETERS['idle'].coordinate)
+    servo_client.MoveTo(constants.TARGET_PARAMETERS['idle'])
     return 300
 
   mirror_coordinate = mirror_client.GetMirrorCoordinate(target_coordinate)
@@ -79,8 +81,7 @@ flags = parser.parse_args()
 pi_client = pigpio.pi()
 mirror_client = mirror.MirrorClient(constants.OBSERVER_COORDINATE)
 servo_client = servo.ServoClient(pi_client, constants.SERVO_PARAMETERS)
-target_client = target.TargetClient(
-    pi_client, constants.TARGET_PARAMETERS, flags.target)
+target_client = target.TargetClient(user_target_name=flags.target)
 mirror_command_callback = functools.partial(
     MirrorCommandCallback, 
     mirror_client=mirror_client, 
