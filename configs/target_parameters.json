@@ -1,17 +1,17 @@
 [
   {
     "name": "living-ceiling",
-    "pitch": 10.0,
+    "pitch": 1.0,
     "yaw": 265.0
   },
   {
     "name": "family-floor",
     "pitch": -15.0,
-    "yaw": 237.0
+    "yaw": 241.0
   },
   {
     "name": "dining-floor",
-    "pitch": -15.0,
+    "pitch": -11.0,
     "yaw": 270.0
   },
   {
@@ -29,7 +29,7 @@
   },
   {
     "name": "dining-ceiling",
-    "pitch": 15.0,
+    "pitch": 10.0,
     "yaw": 265.0
   },
   {
@@ -39,7 +39,7 @@
   },
   {
     "name": "family-ceiling",
-    "pitch": 15.0,
-    "yaw": 265.0
+    "pitch": 7.0,
+    "yaw": 243.0
   }
 ]

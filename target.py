@@ -5,6 +5,7 @@ import lirc
 import numpy as np
 import os
 import pigpio
+import time
 
 _TARGET_PARAMETERS_CONFIG_FILENAME = 'configs/target_parameters.json'
 
@@ -19,6 +20,7 @@ class TargetClient(object):
     self._rate = 5
     self._config_filename = config_filename
     self._target_parameters = self.LoadConfig(self._config_filename)
+    self._long_press_time = None
 
   def GetTarget(self):
     return self._target_parameters[self._current_target_name]
@@ -31,6 +33,10 @@ class TargetClient(object):
     if not button:
       return
     button = str(button[0])
+
+    if button != 'load' and button != 'save':
+      self._long_press_time = None
+
     for target_name, target_parameter in self._target_parameters.iteritems():
       if target_name == button:
         self._current_target_name = button
@@ -59,10 +65,15 @@ class TargetClient(object):
       self._rate = 5 
     elif button == 'fast':
       self._rate = 10
-    elif button == 'save':
-      self.SaveConfig(self._config_filename)
-    elif button == 'load':
-      self._target_parameters = self.LoadConfig(self._config_filename)
+    elif button == 'save' or button == 'load':
+      if self._long_press_time is None:
+        self._long_press_time = time.time()
+      if time.time() - self._long_press_time > 3:  # seconds
+        if button == 'save':
+          self.SaveConfig(self._config_filename)
+        else:
+          self._target_parameters = self.LoadConfig(self._config_filename)
+        self._long_press_time = None
 
   def LoadConfig(self, config_filename):
     with open(config_filename, 'r') as f:
