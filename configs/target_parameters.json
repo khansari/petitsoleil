@@ -7,7 +7,7 @@
   {
     "name": "family-floor",
     "pitch": -15.0,
-    "yaw": 241.0
+    "yaw": 240.0
   },
   {
     "name": "dining-floor",
@@ -24,8 +24,8 @@
   },
   {
     "name": "idle",
-    "pitch": 30.0,
-    "yaw": 260.0
+    "pitch": 11.0,
+    "yaw": 240.0
   },
   {
     "name": "dining-ceiling",

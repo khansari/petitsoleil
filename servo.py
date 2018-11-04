@@ -30,6 +30,7 @@ class ServoClient(object):
       pitch_pw_current = self._pi_client.get_servo_pulsewidth(self._pitch_motor.pin)
       yaw_pw_current = self._pi_client.get_servo_pulsewidth(self._yaw_motor.pin)
     except pigpio.error:
+      print('WARNING: Did not get the servos angles. Moving directly to the target coordinate.')
       self._pi_client.set_servo_pulsewidth(self._pitch_motor.pin, pitch_pw_target)
       self._pi_client.set_servo_pulsewidth(self._yaw_motor.pin, yaw_pw_target)
       return

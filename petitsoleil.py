@@ -82,8 +82,9 @@ flags = parser.parse_args()
 
 pi_client = pigpio.pi()
 mirror_client = mirror.MirrorClient(constants.OBSERVER_COORDINATE)
-servo_client = servo.ServoClient(pi_client, constants.SERVO_PARAMETERS)
 target_client = target.TargetClient(user_target_name=flags.target)
+servo_client = servo.ServoClient(pi_client, constants.SERVO_PARAMETERS)
+servo_client.MoveTo(target_client.GetIdleTarget())
 mirror_command_callback = functools.partial(
     MirrorCommandCallback, 
     mirror_client=mirror_client, 
