@@ -1,16 +1,23 @@
 #! /usr/bin/env python
 
 import argparse
+import calendar
 import constants
 import datetime
 import functools
 import pigpio
+import pytz
 import mirror
 import numpy as np
 import servo
 import target
 import threading
 import time
+
+def GetPacificDateTime():
+  "Returns a datetime object at Pacific timezone."
+  return datetime.datetime.now().replace(
+      tzinfo=pytz.utc).astimezone(pytz.timezone('US/Pacific'))
 
 class ButtonStatusThread(threading.Thread):
   """Thread class with a stop() method. The thread itself has to check
@@ -40,7 +47,7 @@ def MirrorCommandCallback(
     mirror_client, servo_client, target_client, no_hybernate=False):
   print('************************************************************')
   # Printing time in pacific time zone.
-  print(datetime.datetime.now() + datetime.timedelta(hours=-7))
+  print('%s %s' % (calendar.day_abbr[GetPacificDateTime().weekday()], GetPacificDateTime()))
   target_coordinate = target_client.GetTarget()
   if target_coordinate is None:
     print 'Petit Soleil is off.'
@@ -60,7 +67,9 @@ def MirrorCommandCallback(
 
   if not no_hybernate and (
       (sun_coordinate.pitch < np.deg2rad(20) and sun_coordinate.yaw > np.deg2rad(180)) or
-      (sun_coordinate.yaw < np.deg2rad(140))):
+      (sun_coordinate.yaw < np.deg2rad(140)) or
+       GetPacificDateTime().weekday() < 5 # We only acticate it over the weekend. 
+  ):
     print('Hybernate mode is active.')
     servo_client.MoveTo(target_client.GetIdleTarget())
     return 300
